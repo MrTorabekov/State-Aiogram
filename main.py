@@ -5,7 +5,7 @@ from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
 from form import Form, Login, facebook, DataUser
 from aiogram.fsm.context import FSMContext
-from buttons import keyboard, key, check, keyboard1
+from buttons import keyboard, key, check, keyboard1, number1
 from config import TOKEN, data_group
 from db import Database
 
@@ -48,7 +48,7 @@ async def callback_submit(call: CallbackQuery, bot: Bot):
 
 @dp.message(Form.name)
 async def usernames(message: Message, state: FSMContext):
-    await state.update_data(name=message.text)
+    await state.update_data(name=message.text.capitalize())
     await state.set_state(Form.username)
     await message.answer("Username ni kiritng")
 
@@ -126,34 +126,28 @@ async def fullname(message: Message, state: FSMContext):
 
 @dp.message(facebook.fullname)
 async def phone(message: Message, state: FSMContext):
-    await state.update_data(fullname=message.text)
+    await state.update_data(fullname=message.text.title())
     await state.set_state(facebook.phone)
-    await message.answer("Telefon raqamingizni kiriting:")
+    await message.answer("Telefon raqamingizni kiriting:", reply_markup=number1)
 
 
 @dp.message(facebook.phone)
 async def phone(message: Message, state: FSMContext):
-    if message.text[0:4] == "+998":
-        if message.text[4:10]:
-            await state.update_data(phone=message.text)
-            await state.set_state(facebook.children)
-            await message.answer("Bolangizni ismi")
-        else:
-            await message.answer("Telefon raqam 11 sondan iborat boshlanishi kerak")
-    else:
-        await message.answer("raqam +998 nilan boshlanishi kerak")
+    await state.update_data(phone=message.contact.phone_number)
+    await state.set_state(facebook.children)
+    await message.answer("Bolangizni ismi")
 
 
 @dp.message(facebook.children)
 async def sinf(message: Message, state: FSMContext):
-    await state.update_data(children=message.text)
+    await state.update_data(children=message.text.capitalize())
     await state.set_state(facebook.adress)
     await message.answer("adressingizni yozing:")
 
 
 @dp.message(facebook.adress)
 async def adress(message: Message, state: FSMContext):
-    await state.update_data(adress=message.text)
+    await state.update_data(adress=message.text.title())
     await state.set_state(facebook.sinf)
     await message.answer("bolangiz nechinchi sinfda o'qimoqchi")
 
@@ -173,7 +167,7 @@ async def location(message: Message, state: FSMContext, bot: Bot):
     data2 = await state.get_data()
     await state.clear()
     await message.answer(
-        "You have successfully",
+        "You have successfully", reply_markup=types.ReplyKeyboardRemove()
     )
     fullname = data2.get("fullname", "Unknown")
     phone = data2.get("phone", "Unknown")

@@ -31,7 +31,6 @@ keyboard1 = types.ReplyKeyboardMarkup(
 
 
 number = [
-    [KeyboardButton(text="Kontactni yuborish")]
+    [KeyboardButton(text="Kontactni yuborish", request_contact=True)]
 ]
 number1 = types.ReplyKeyboardMarkup(keyboard=number, resize_keyboard=True)
-print("+998"[0:3])
