@@ -7,10 +7,10 @@ class Form(StatesGroup):
     password = State()
     finish = State()
 
-class Login(StatesGroup):
-    username = State()
-    password = State()
-    finish = State()
+# class Login(StatesGroup):
+#     username = State()
+#     password = State()
+#     finish = State()
 
 
 class facebook(StatesGroup):

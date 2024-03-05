@@ -3,11 +3,13 @@ import logging
 from aiogram import Bot, Dispatcher, F, types
 from aiogram.filters import CommandStart
 from aiogram.types import Message, CallbackQuery
-from form import Form, Login, facebook, DataUser
+from form import Form, facebook, DataUser
 from aiogram.fsm.context import FSMContext
-from buttons import keyboard, key, check, keyboard1, number1
-from config import TOKEN, data_group
-from db import Database
+from buttons import keyboard, key, check, keyboard1, number1, d, i
+from config import TOKEN, data_group, admin
+from db import Database, Database1
+
+ariza = Database1("database.db")
 
 db = Database("database.db")
 
@@ -17,7 +19,7 @@ dp = Dispatcher()
 @dp.message(CommandStart())
 async def start(message: Message):
     await message.answer(
-        f"Assalomu alekum! {message.from_user.full_name} botni ishlatish uchun pastdagi kanalga obuna bo'ling",
+        f"Assalomu alekum! {message.from_user.full_name}\n\nbotni ishlatish uchun pastdagi kanalga obuna bo'ling",
         reply_markup=check)
     print(message.from_user.full_name)
     # db.add_user(message.from_user.id, message.from_user.full_name)
@@ -29,9 +31,9 @@ async def callback_submit(call: CallbackQuery, bot: Bot):
 
     if user_status.status != "left":
         await bot.send_message(
-            call.from_user.id, "✅"
+            call.from_user.id, "Muvaffaqiyatlu O'tdingiz"
         )
-        await call.message.answer("Login or Register", reply_markup=keyboard)
+        await call.message.answer("Register", reply_markup=keyboard)
     else:
         await bot.send_message(call.from_user.id, text="Siz kanalga obuna bulmagansiz!", reply_markup=check)
         text = ("Kanalga obuna bo'lmagansiz ⚠️"
@@ -75,46 +77,44 @@ async def finish(message: Message, state: FSMContext):
 
     matn = f"🧑‍💻 Name: {name}\n⚡️ Username: {username}\n🔐 Password: {password}"
     await message.answer(text=matn, reply_markup=key)
-    db.add_user(name, username, password)
-    print(matn)
 
     DataUser["username"] = username
     DataUser["password"] = password
 
 
-@dp.message(F.text == "Login")
-async def start(message: Message, state: FSMContext):
-    await state.update_data(username=message.text)
-    await state.set_state(Login.username)
-    await message.answer("Tepada yozgan username ni kiriting:")
-    print(message.from_user.full_name)
-
-
-@dp.message(Login.username)
-async def username(message: Message, state: FSMContext):
-    await state.update_data(username=message.text)
-    await state.set_state(Login.password)
-    await message.answer("Tepada yozgan parolingizni kiriting:")
-    print(message.from_user.full_name)
-
-
-@dp.message(Login.password)
-async def finish(message: Message, state: FSMContext):
-    await state.update_data(password=message.text)
-    await state.set_state(Login.finish)
-    userdata = await state.get_data()
-    await state.clear()
-    username = userdata.get("username", "Unknown")
-    password = userdata.get("password", "Unknown")
-    print(username, password)
-    print(message.from_user.full_name)
-
-    if username == DataUser["username"] and password == DataUser["password"]:
-        await message.answer("Muvaffaqiyatli amalga oshirildi")
-        print("Successful")
-    else:
-        await message.answer("Wrong username or password")
-        print("username yoki parol notog'ri")
+# @dp.message(F.text == "Login")
+# async def start(message: Message, state: FSMContext):
+#     await state.update_data(username=message.text)
+#     await state.set_state(Login.username)
+#     await message.answer("Tepada yozgan username ni kiriting:")
+#     print(message.from_user.full_name)
+#
+#
+# @dp.message(Login.username)
+# async def username(message: Message, state: FSMContext):
+#     await state.update_data(username=message.text)
+#     await state.set_state(Login.password)
+#     await message.answer("Tepada yozgan parolingizni kiriting:")
+#     print(message.from_user.full_name)
+#
+#
+# @dp.message(Login.password)
+# async def finish(message: Message, state: FSMContext):
+#     await state.update_data(password=message.text)
+#     await state.set_state(Login.finish)
+#     userdata = await state.get_data()
+#     await state.clear()
+#     username = userdata.get("username", "Unknown")
+#     password = userdata.get("password", "Unknown")
+#     print(username, password)
+#     print(message.from_user.full_name)
+#
+#     if username == DataUser["username"] and password == DataUser["password"]:
+#         await message.answer("Muvaffaqiyatli amalga oshirildi")
+#         print("Successful")
+#     else:
+#         await message.answer("Wrong username or password")
+#         print("username yoki parol notog'ri")
 
 
 @dp.message(F.text == "Ariza to'ldirish")
@@ -167,7 +167,7 @@ async def location(message: Message, state: FSMContext, bot: Bot):
     data2 = await state.get_data()
     await state.clear()
     await message.answer(
-        "You have successfully", reply_markup=types.ReplyKeyboardRemove()
+        "Muvaffaqiyatli bo'ldi", reply_markup=types.ReplyKeyboardRemove()
     )
     fullname = data2.get("fullname", "Unknown")
     phone = data2.get("phone", "Unknown")
@@ -181,7 +181,23 @@ async def location(message: Message, state: FSMContext, bot: Bot):
                            text=f"Murojat qilgan shaxs {message.from_user.full_name}\n\n🧑‍💻Ism va Familiya: {fullname}\n📱Telefon raqam: {phone}\n👦🏻farzandini ismi: {children}\n🟤Turar joylari: {adress}\n🔢Farzandini sinfi: {sinf}")
     await bot.send_location(data_group, latitude=location1, longitude=location2)  # noqa
     await message.answer(
-        f"🧑‍💻 fullname: {fullname}\n📱phone number: {phone}\n👦🏻child's name: {children}\n🟤adress: {adress}\n🔢sinf number: {sinf}")
+        f"🧑‍💻 fullname: {fullname}\n📱phone number: {phone}\n👦🏻child's name: {children}\n🟤adress: {adress}\n🔢sinf number: {sinf}",
+        reply_markup=i)
+    ariza.add_user(fullname, phone, children, adress, sinf, location1, location2)
+
+
+@dp.message(F.text == "Get id")
+async def get_id(message: Message):
+    a = ariza.get_all_users()
+    for ii in a:
+        await message.answer(f"""Key ID: {ii[0]}
+Full name : {ii[1]}
+Phone number : {ii[2]}
+Child's name : {ii[3]}
+Adress : {ii[4]}
+Sinf number : {ii[5]}
+Location : 👇""")
+        await message.answer_location(longitude=ii[6], latitude=ii[7])
 
 
 async def main() -> None:
