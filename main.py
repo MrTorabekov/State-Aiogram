@@ -31,11 +31,11 @@ async def callback_submit(call: CallbackQuery, bot: Bot):
 
     if user_status.status != "left":
         await bot.send_message(
-            call.from_user.id, "Muvaffaqiyatlu O'tdingiz"
+            call.from_user.id, "✅Muvaffaqiyatli O'tdingiz endi registerdan o'ting ", reply_markup=keyboard
         )
-        await call.message.answer("Register", reply_markup=keyboard)
+
     else:
-        await bot.send_message(call.from_user.id, text="Siz kanalga obuna bulmagansiz!", reply_markup=check)
+        await bot.send_photo(call.from_user.id, "https://images.app.goo.gl/CvbURquWkAAJ7eCT7", reply_markup=check)
         text = ("Kanalga obuna bo'lmagansiz ⚠️"
                 )
         show_alert = True
@@ -45,41 +45,32 @@ async def callback_submit(call: CallbackQuery, bot: Bot):
     async def reg(message: Message, state: FSMContext):
         if message.text == "Register":
             await state.set_state(Form.name)
-            await message.answer("Ismingizni kiriting:")
+            await message.answer("📝Ismingizni kiriting:")
 
 
 @dp.message(Form.name)
 async def usernames(message: Message, state: FSMContext):
     await state.update_data(name=message.text.capitalize())
     await state.set_state(Form.username)
-    await message.answer("Username ni kiritng")
+    await message.answer("🖋Username ni kiritng")
 
 
 @dp.message(Form.username)
-async def passwords(message: Message, state: FSMContext):
-    await state.update_data(username=message.text)
-    await state.set_state(Form.password)
-    await message.answer("parolingizni kirting:")
-
-
-@dp.message(Form.password)
 async def finish(message: Message, state: FSMContext):
-    await state.update_data(password=message.text)
+    await state.update_data(username=message.text)
     await state.set_state(Form.finish)
     data = await state.get_data()
     await state.clear()
     await message.answer(
-        "Muvaffaqiyatli amalga oshirildi",
+        "✅Muvaffaqiyatli amalga oshirildi",
     )
     name = data.get("name", "Unknown")
     username = data.get("username", "Unknown")
-    password = data.get("password", "Unknown")
 
-    matn = f"🧑‍💻 Name: {name}\n⚡️ Username: {username}\n🔐 Password: {password}"
+    matn = f"🧑‍💻 Name: {name}\n⚡️ Username: {username}"
     await message.answer(text=matn, reply_markup=key)
 
     DataUser["username"] = username
-    DataUser["password"] = password
 
 
 # @dp.message(F.text == "Login")
@@ -154,9 +145,13 @@ async def adress(message: Message, state: FSMContext):
 
 @dp.message(facebook.sinf)
 async def sinf(message: Message, state: FSMContext):
-    await state.update_data(sinf=message.text)
-    await state.set_state(facebook.location)
-    await message.answer("Lokatsiyani yuboring:", reply_markup=keyboard1)
+    if 1 <= int(message.text) >= 11:
+        await state.update_data(sinf=message.text)
+        await state.set_state(facebook.location)
+        await message.answer("Lokatsiyani yuboring:", reply_markup=keyboard1)
+    else:
+        await state.set_state(facebook.sinf)
+        await message.answer("1-11 bo'lgan sinflar kiritishingiz zarur")
 
 
 @dp.message(facebook.location and F.location)
@@ -181,23 +176,23 @@ async def location(message: Message, state: FSMContext, bot: Bot):
                            text=f"Murojat qilgan shaxs {message.from_user.full_name}\n\n🧑‍💻Ism va Familiya: {fullname}\n📱Telefon raqam: {phone}\n👦🏻farzandini ismi: {children}\n🟤Turar joylari: {adress}\n🔢Farzandini sinfi: {sinf}")
     await bot.send_location(data_group, latitude=location1, longitude=location2)  # noqa
     await message.answer(
-        f"🧑‍💻 fullname: {fullname}\n📱phone number: {phone}\n👦🏻child's name: {children}\n🟤adress: {adress}\n🔢sinf number: {sinf}",
+        f"🧑‍💻 ism va familiya: {fullname}\n📱Telefon raqam: {phone}\n👦🏻farzandingizni ismi: {children}\n🟤Turar joyingiz: {adress}\n🔢sinf raqam: {sinf}",
         reply_markup=i)
     ariza.add_user(fullname, phone, children, adress, sinf, location1, location2)
 
 
-@dp.message(F.text == "Get id")
-async def get_id(message: Message):
-    a = ariza.get_all_users()
-    for ii in a:
-        await message.answer(f"""Key ID: {ii[0]}
-Full name : {ii[1]}
-Phone number : {ii[2]}
-Child's name : {ii[3]}
-Adress : {ii[4]}
-Sinf number : {ii[5]}
-Location : 👇""")
-        await message.answer_location(longitude=ii[6], latitude=ii[7])
+# @dp.message(F.text == "Get id")
+# async def get_id(message: Message):
+#     a = ariza.get_all_users
+#     for ii in a():
+#         await message.answer(f"""Key ID: {ii[0]}
+# Full name : {ii[1]}
+# Phone number : {ii[2]}
+# Child's name : {ii[3]}
+# Adress : {ii[4]}
+# Sinf number : {ii[5]}
+# Location : 👇""")
+#         await message.answer_location(longitude=ii[6], latitude=ii[7])
 
 
 async def main() -> None:
