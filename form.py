@@ -6,11 +6,6 @@ class Form(StatesGroup):
     username = State()
     finish = State()
 
-# class Login(StatesGroup):
-#     username = State()
-#     password = State()
-#     finish = State()
-
 
 class facebook(StatesGroup):
     fullname = State()

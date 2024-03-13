@@ -1,0 +1,3 @@
+TOKEN = "6428109513:AAFfyBrvZWJkb_ANqpkCNOMryMCpJAgva3I"
+data_group = -1002136433870
+admin: int = 1747966069
