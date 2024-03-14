@@ -11,7 +11,7 @@ key = types.ReplyKeyboardMarkup(keyboard=ke, resize_keyboard=True, one_time_keyb
 
 check = InlineKeyboardMarkup(inline_keyboard=[
 
-    [InlineKeyboardButton(text="Obuna bo'lish", url="https://t.me/+61VzaOR1ztk1ZWJi")],
+    [InlineKeyboardButton(text="Obuna bo'lish", url="https://t.me/Ahmadjon_Abdulfotiyev")],
     [InlineKeyboardButton(text="Tasdiqlash", callback_data="submit")]
 ])
 

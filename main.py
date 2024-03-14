@@ -40,7 +40,6 @@ async def callback_submit(call: CallbackQuery, bot: Bot):
             parse_mode="HTML")
 
     else:
-        await bot.send_photo(call.from_user.id, "https://images.app.goo.gl/CvbURquWkAAJ7eCT7", reply_markup=check)
         text = ("Kanalga obuna bo'lmagansiz ⚠️"
                 )
         await call.answer(text, show_alert=True)
