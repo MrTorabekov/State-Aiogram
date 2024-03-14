@@ -5,13 +5,13 @@ kb = [[KeyboardButton(text="Register")]]
 
 keyboard = ReplyKeyboardMarkup(keyboard=kb, resize_keyboard=True, input_field_placeholder="Choose Button")
 
-ke = [[types.KeyboardButton(text="Ariza to'ldirish")]]
+ke = [[types.KeyboardButton(text="Ariza qoldirish")]]
 
 key = types.ReplyKeyboardMarkup(keyboard=ke, resize_keyboard=True, one_time_keyboard=True)
 
 check = InlineKeyboardMarkup(inline_keyboard=[
 
-    [InlineKeyboardButton(text="Obuna bo'ling", url="https://t.me/+A3sk-slXf7RmNjIy")],
+    [InlineKeyboardButton(text="Obuna bo'lish", url="https://t.me/+61VzaOR1ztk1ZWJi")],
     [InlineKeyboardButton(text="Tasdiqlash", callback_data="submit")]
 ])
 

@@ -7,7 +7,7 @@ from aiogram.types import Message, CallbackQuery
 from form import Form, facebook, DataUser
 from aiogram.fsm.context import FSMContext
 from buttons import keyboard, key, check, keyboard1, number1, get_id
-from config import TOKEN, data_group, admin
+from config import TOKEN, data_group, admin,Ahmad_group
 from db import Database, Database1
 from aiogram.utils.markdown import hbold
 from aiogram.types import ReplyKeyboardRemove
@@ -31,62 +31,24 @@ async def start(message: Message):
 
 @dp.callback_query(F.data == "submit")
 async def callback_submit(call: CallbackQuery, bot: Bot):
-    user_status = await bot.get_chat_member(chat_id=data_group, user_id=call.from_user.id)
+    user_status = await bot.get_chat_member(chat_id=Ahmad_group, user_id=call.from_user.id)
 
     if user_status.status != "left":
         await bot.send_message(
             call.from_user.id,
-            "<b>Muvaffaqiyatli O'tdingiz endi registerdan o'tishingiz mumkun✅!</b>", reply_markup=keyboard,
+            "<b>Muvaffaqiyatli O'tdingiz endi registerdan o'tishingiz mumkun✅!</b>", reply_markup=key,
             parse_mode="HTML")
 
-    elif user_status.status == "left":
+    else:
         await bot.send_photo(call.from_user.id, "https://images.app.goo.gl/CvbURquWkAAJ7eCT7", reply_markup=check)
         text = ("Kanalga obuna bo'lmagansiz ⚠️"
                 )
-        show_alert = True
-        await call.answer(text, show_alert=show_alert)
-
-    @dp.message(F.text == "Register")
-    async def reg(message: Message, state: FSMContext):
-        await state.set_state(Form.name)
-        await message.answer("📝Ismingizni kiriting:", reply_markup=ReplyKeyboardRemove())
+        await call.answer(text, show_alert=True)
 
 
-@dp.message(Form.name)
-async def usernames(message: Message, state: FSMContext):
-    if message.text.isalpha():
-        await state.update_data(name=message.text.capitalize())
-        await state.set_state(Form.username)
-        await message.answer("🖋Username ni kiritng")
-    elif message.text == "/start":
-        await message.answer("Siz username kiriting:")
 
 
-    else:
-        await message.answer(
-            "<b>Ismingizni joy tashlamasdan harflar bilan yozing!</b>\n\nMisol uchun\n✅:Diyorbek\n❌:1)Diyor bek \n❌2)Diyorbek579",
-            parse_mode="HTML")
-
-
-@dp.message(Form.username)
-async def finish(message: Message, state: FSMContext):
-    await state.update_data(username=message.text)
-    await state.set_state(Form.finish)
-    data = await state.get_data()
-    await state.clear()
-    await message.answer(
-        "✅Muvaffaqiyatli amalga oshirildi",
-    )
-    name = data.get("name", "Unknown")
-    username = data.get("username", "Unknown")
-
-    matn = f"🧑‍💻 Name: {name}\n⚡️ Username: {username}"
-    await message.answer(text=matn, reply_markup=key)
-
-    DataUser["username"] = username
-
-
-@dp.message(F.text == "Ariza to'ldirish")
+@dp.message(F.text == "Ariza qoldirish")
 async def fullname(message: Message, state: FSMContext):
     await state.update_data(fullname=message.text)
     await state.set_state(facebook.fullname)
